@@ -5,6 +5,7 @@ import it.reply.data.pasquali.metrics.RecMetricsCollector
 import it.reply.data.pasquali.metrics.model.Metric
 import org.scalatra.scalate.ScalateSupport
 import org.scalatra.{FlashMapSupport, ScalatraServlet}
+import org.slf4j.LoggerFactory
 
 
 class Controller extends ScalatraServlet with FlashMapSupport with ScalateSupport{
@@ -12,35 +13,57 @@ class Controller extends ScalatraServlet with FlashMapSupport with ScalateSuppor
   var cloudera : ClouderaConnector = null
   var ansible : AnsibleConnector = null
 
+  val logger = LoggerFactory.getLogger(getClass)
+
   def initConnectors() : Unit = {
+
+    logger.info(" ******************* Init Connectors")
+
     cloudera = ClouderaConnector("35.229.22.3", "7051")
     cloudera.init()
+
+    logger.info(" ******************* Init Cloudera")
+
     ansible = AnsibleConnector(
       "/opt/DevOpsProduction-Orchestrator/ansible/s",
       "/home/xxpasquxx/.ssh/ansible_rsa_key",
       "xxpasquxx"
     )
+
+    logger.info(" ******************* ")
   }
 
   get("/") {
     if(cloudera == null)
       initConnectors()
+
+    logger.info(" ******************* HOME")
+
     "This webapp only collect and provides metrics for DevOps echosystem\n"+
     "The collection process is periodically run in order to provide fresh values\n\n"+
     "Use /metrics to get actual metrics\n"+
     "Use /metrics/fresh to get refreshed metrics"
+
+
   }
 
   // *********************** MACHINE STATUS *******************
 
   get("/isonline") {
+
+    logger.info(" ******************* IS ONLINE")
+
     "/isonline/big-brother\n" +
       "/isonline/cloudera-vm\n" +
       "/isonline/devops-worker"
   }
 
   get("/isonline/:machine") {
+
     val vm = params.getOrElse("machine", "0.0.0.0")
+
+    logger.info(s" ******************* IS ONLINE ${vm}")
+
     s"$vm is online? ${if(collectMachineStatus(vm)) "yes" else "no"}"
   }
 
@@ -58,6 +81,9 @@ class Controller extends ScalatraServlet with FlashMapSupport with ScalateSuppor
 
     val db = params.getOrElse("database", "default")
     val table = params.getOrElse("table", "test")
+
+    logger.info(s" ******************* Count $db.$table")
+
     val count = collectCountsHive(db, table)
 
     s"Found $count elements in $db.$table"
@@ -74,6 +100,9 @@ class Controller extends ScalatraServlet with FlashMapSupport with ScalateSuppor
 
     val db = params.getOrElse("database", "default")
     val table = params.getOrElse("table", "test")
+
+    logger.info(s" ******************* Count $db.$table")
+
     val count = collectCountsKudu(db, table)
 
     s"Found $count elements in $db.$table"
@@ -83,6 +112,9 @@ class Controller extends ScalatraServlet with FlashMapSupport with ScalateSuppor
   // *********************** SERVICE STATUS ********************
 
   get("/service/status") {
+
+    logger.info(" ******************* SERVICE STATUS")
+
     var body = "/service/status/cloudera-vm/cloudera-scm-server\n"
     body += "/service/status/cloudera-vm/cloudera-scm-agent\n"
     body += "\n"
@@ -113,6 +145,8 @@ class Controller extends ScalatraServlet with FlashMapSupport with ScalateSuppor
   get("/metrics/fresh") {
     if(cloudera == null)
       initConnectors()
+
+    logger.info(" ******************* REFRESH METRICS ")
 
     // MACHINE STATUS
     val cvm = collectMachineStatus("cloudera-vm")
@@ -162,6 +196,8 @@ class Controller extends ScalatraServlet with FlashMapSupport with ScalateSuppor
     if(cloudera == null)
       initConnectors()
 
+    logger.info(" ******************* GET METRICS")
+
     RecMetricsCollector.getPrometheusMetrics()
   }
 
@@ -175,6 +211,7 @@ class Controller extends ScalatraServlet with FlashMapSupport with ScalateSuppor
       new Metric(s"is_online_${vm}", s"1 if $vm is online, 0 otherwise",
         if(online) 1 else 0, "devops_exporter", ""))
 
+    logger.info(s" ******************* Metrics update, now ${RecMetricsCollector.metrics.size}")
     online
   }
 
@@ -187,6 +224,7 @@ class Controller extends ScalatraServlet with FlashMapSupport with ScalateSuppor
       new Metric(s"hive_${table}_number", s"number of ${table} in the ${db}",
         count, "devops_exporter", ""))
 
+    logger.info(s" ******************* Metrics update, now ${RecMetricsCollector.metrics.size}")
     count
   }
 
@@ -195,10 +233,11 @@ class Controller extends ScalatraServlet with FlashMapSupport with ScalateSuppor
     val count = cloudera.countKudu(db, table)
 
     RecMetricsCollector.addMetric(
-      s"hive_${table}_number",
+      s"kudu_${table}_number",
       new Metric(s"kudu_${table}_number", s"number of ${table} in the ${db}",
         count, "devops_exporter", ""))
 
+    logger.info(s" ******************* Metrics update, now ${RecMetricsCollector.metrics.size}")
     count
   }
 
@@ -210,6 +249,7 @@ class Controller extends ScalatraServlet with FlashMapSupport with ScalateSuppor
       new Metric(s"is_online_${vm}", s"1 if $vm is online, 0 otherwise",
         if(running) 1 else 0, "devops_exporter", vm))
 
+    logger.info(s" ******************* Metrics update, now ${RecMetricsCollector.metrics.size}")
     running
   }
 }
