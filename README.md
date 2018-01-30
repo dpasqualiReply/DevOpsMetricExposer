@@ -1,3 +1,3 @@
-# DevOpsProduction-RealTimeMovieRec
+# DevOpsMetricExposer
 
-run with sbt jetty:start
+jetty webapp that collects and exposes metrics for DevOps project
