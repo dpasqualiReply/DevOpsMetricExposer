@@ -67,7 +67,7 @@ case class AnsibleConnector(ansibleHome : String,
 
     var res = s"""ansible-playbook -i '$machineAddress,' all """ +
       s"""--private-key=$SSHKeyFile """ +
-      s"""ansible/test-service.yml """+
+      s"""./ansible/test-service.yml """+
       s"""-e 'ansible_ssh_user=$ansibleSSHUser' """ +
       s"""-e 'host_key_checking=False' """ +
       s"""--extra-vars "service_pretty=$service service=$service" """ +
@@ -88,7 +88,7 @@ case class AnsibleConnector(ansibleHome : String,
 
     val query = s"""ansible-playbook -i '$machineAddress,' all """ +
       s"""--private-key=$SSHKeyFile """ +
-      s"""ansible/test-service.yml """+
+      s"""./ansible/test-service.yml """+
       s"""-e 'ansible_ssh_user=$ansibleSSHUser' """ +
       s"""-e 'host_key_checking=False' """ +
       s"""--extra-vars "service_pretty=$service service=$service" """ +
