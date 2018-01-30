@@ -16,20 +16,20 @@ case class AnsibleConnector(ansibleHome : String,
 
     logger.info(" .......................... ANSIBLE PING")
 
-    val query = s"""ansible -i '$machineAddress,' all
-                   |--private-key=$SSHKeyFile
-                   |-e 'ansible_ssh_user=$ansibleSSHUser'
-                   |-e 'host_key_checking=False'
-                   |-m ping""".stripMargin
+    val query = s"""ansible -i '$machineAddress,' all """ +
+                   s"""--private-key=$SSHKeyFile """ +
+                   s"""-e 'ansible_ssh_user=$ansibleSSHUser' """ +
+                   s"""-e 'host_key_checking=False' """ +
+                   s"""-m ping"""
 
     logger.info(s" .......................... ANSIBLE COMMAND $query")
 
     var res =
-      s"""ansible -i '$machineAddress,' all
-        |--private-key=$SSHKeyFile
-        |-e 'ansible_ssh_user=$ansibleSSHUser'
-        |-e 'host_key_checking=False'
-        |-m ping""".stripMargin !!
+      s"""ansible -i '$machineAddress,' all """ +
+        s"""--private-key=$SSHKeyFile """ +
+        s"""-e 'ansible_ssh_user=$ansibleSSHUser' """ +
+        s"""-e 'host_key_checking=False' """ +
+        s"""-m ping""" !!
 
     res.contains(machineAddress) && res.contains("SUCCESS") && res.contains(""""ping": "pong"""")
   }
@@ -38,25 +38,23 @@ case class AnsibleConnector(ansibleHome : String,
 
     logger.info(" .......................... ANSIBLE CHECK SERVICE")
 
-    val query = s"""ansible-playbook -i '$machineAddress,' all
-                   |--private-key=$SSHKeyFile
-                   |ansible/test-service.yml
-                   |-e 'ansible_ssh_user=$ansibleSSHUser'
-                   |-e 'host_key_checking=False'
-                   |--extra-vars "service_pretty=$service service=$service"
-                   || tail -n 2
-                  """.stripMargin
+    val query = s"""ansible-playbook -i '$machineAddress,' all """ +
+                   s"""--private-key=$SSHKeyFile """ +
+                   s"""ansible/test-service.yml """+
+                   s"""-e 'ansible_ssh_user=$ansibleSSHUser' """ +
+                   s"""-e 'host_key_checking=False' """ +
+                   s"""--extra-vars "service_pretty=$service service=$service" """ +
+                   s"""| tail -n 2 """
 
     logger.info(s" .......................... ANSIBLE COMMAND $query")
 
-    var res = s"""ansible-playbook -i '$machineAddress,' all
-             |--private-key=$SSHKeyFile
-             |ansible/test-service.yml
-             |-e 'ansible_ssh_user=$ansibleSSHUser'
-             |-e 'host_key_checking=False'
-             |--extra-vars "service_pretty=$service service=$service"
-             || tail -n 2
-             """.stripMargin !!
+    var res = s"""ansible-playbook -i '$machineAddress,' all """ +
+      s"""--private-key=$SSHKeyFile """ +
+      s"""ansible/test-service.yml """+
+      s"""-e 'ansible_ssh_user=$ansibleSSHUser' """ +
+      s"""-e 'host_key_checking=False' """ +
+      s"""--extra-vars "service_pretty=$service service=$service" """ +
+      s"""| tail -n 2 """ !!
 
     val ar = getAnsibleRunResult(res)
 
