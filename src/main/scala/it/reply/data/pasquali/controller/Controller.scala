@@ -13,7 +13,8 @@ class Controller extends ScalatraServlet with FlashMapSupport with ScalateSuppor
   var ansible : AnsibleConnector = null
 
   def initConnectors() : Unit = {
-    cloudera = ClouderaConnector("cloudera-vm", "7051")
+    cloudera = ClouderaConnector("35.229.22.3", "7051")
+    cloudera.init()
     ansible = AnsibleConnector(
       "/opt/DevOpsProduction-Orchestrator/ansible/s",
       "/home/xxpasquxx/.ssh/ansible_rsa_key",
