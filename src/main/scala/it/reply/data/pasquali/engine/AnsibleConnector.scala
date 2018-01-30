@@ -34,17 +34,34 @@ case class AnsibleConnector(ansibleHome : String,
     res.contains(machineAddress) && res.contains("SUCCESS") && res.contains(""""ping": "pong"""")
   }
 
+  def pingMachinePy(machineAddress : String) : Boolean = {
+
+    logger.info(" .......................... ANSIBLE PING")
+
+    val query = s"""ansible -i '$machineAddress,' all """ +
+      s"""--private-key=$SSHKeyFile """ +
+      s"""-e 'ansible_ssh_user=$ansibleSSHUser' """ +
+      s"""-e 'host_key_checking=False' """ +
+      s"""-m ping"""
+
+    logger.info(s" .......................... ANSIBLE COMMAND $query")
+
+    var res = s"""python ansbile/run.py $query"""
+
+    res.contains(machineAddress) && res.contains("SUCCESS") && res.contains(""""ping": "pong"""")
+  }
+
   def checkServiceRunning(machineAddress : String, service : String) : Boolean = {
 
     logger.info(" .......................... ANSIBLE CHECK SERVICE")
 
     val query = s"""ansible-playbook -i '$machineAddress,' all """ +
-                   s"""--private-key=$SSHKeyFile """ +
-                   s"""ansible/test-service.yml """+
-                   s"""-e 'ansible_ssh_user=$ansibleSSHUser' """ +
-                   s"""-e 'host_key_checking=False' """ +
-                   s"""--extra-vars "service_pretty=$service service=$service" """ +
-                   s"""| tail -n 2 """
+      s"""--private-key=$SSHKeyFile """ +
+      s"""ansible/test-service.yml """+
+      s"""-e 'ansible_ssh_user=$ansibleSSHUser' """ +
+      s"""-e 'host_key_checking=False' """ +
+      s"""--extra-vars "service_pretty=$service service=$service" """ +
+      s"""| tail -n 2 """
 
     logger.info(s" .......................... ANSIBLE COMMAND $query")
 
@@ -55,6 +72,31 @@ case class AnsibleConnector(ansibleHome : String,
       s"""-e 'host_key_checking=False' """ +
       s"""--extra-vars "service_pretty=$service service=$service" """ +
       s"""| tail -n 2 """ !!
+
+    val ar = getAnsibleRunResult(res)
+
+    ar.name.equals(machineAddress) &&
+      (ar.ok >= 1) &&
+      (ar.changed >= 0) &&
+      (ar.unreachable == 0) &&
+      (ar.failed == 0)
+  }
+
+  def checkServiceRunningPy(machineAddress : String, service : String) : Boolean = {
+
+    logger.info(" .......................... ANSIBLE CHECK SERVICE")
+
+    val query = s"""ansible-playbook -i '$machineAddress,' all """ +
+      s"""--private-key=$SSHKeyFile """ +
+      s"""ansible/test-service.yml """+
+      s"""-e 'ansible_ssh_user=$ansibleSSHUser' """ +
+      s"""-e 'host_key_checking=False' """ +
+      s"""--extra-vars "service_pretty=$service service=$service" """ +
+      s"""| tail -n 2 """
+
+    logger.info(s" .......................... ANSIBLE COMMAND $query")
+
+    var res = s"""python ansbile/run.py $query"""
 
     val ar = getAnsibleRunResult(res)
 
