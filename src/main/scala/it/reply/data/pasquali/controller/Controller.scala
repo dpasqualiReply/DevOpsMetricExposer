@@ -83,7 +83,7 @@ class Controller extends ScalatraServlet with FlashMapSupport with ScalateSuppor
 
   get("/service/status") {
     var body = "/service/status/cloudera-vm/cloudera-scm-server\n"
-    body += "/service/status/cloudera-vm/cloudera-scm-agents\n"
+    body += "/service/status/cloudera-vm/cloudera-scm-agent\n"
     body += "\n"
     body += "/service/status/big-brother/jenkins\n"
     body += "/service/status/big-brother/prometheus\n"
@@ -132,7 +132,7 @@ class Controller extends ScalatraServlet with FlashMapSupport with ScalateSuppor
 
       // SERVICES
       collectServiceStatus("cloudera-vm", "cloudera-scm-server")
-      collectServiceStatus("cloudera-vm", "cloudera-scm-agents")
+      collectServiceStatus("cloudera-vm", "cloudera-scm-agent")
     }
     else println("[ ERROR ] Cloudera VM is offline!!")
 
