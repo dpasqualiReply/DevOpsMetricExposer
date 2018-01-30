@@ -1,5 +1,3 @@
-package it.reply.data.pasquali
-
 import javax.servlet.ServletContext
 
 import it.reply.data.pasquali.controller.Controller

@@ -1,5 +1,3 @@
-package it.reply.data.pasquali
-
 import it.reply.data.pasquali.controller.Controller
 import org.eclipse.jetty.server.Server
 import org.eclipse.jetty.webapp.WebAppContext
