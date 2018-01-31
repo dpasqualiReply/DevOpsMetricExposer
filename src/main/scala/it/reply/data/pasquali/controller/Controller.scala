@@ -128,7 +128,7 @@ class Controller extends ScalatraServlet with FlashMapSupport with ScalateSuppor
     body += "/service/status/devops-worker/devops-kafka-jdbc-connector\n"
     body += "/service/status/devops-worker/devops-rtetl-ratings\n"
     body += "/service/status/devops-worker/devops-rtetl-tags\n"
-    body += "/service/status/devops-worker/devops-bml\n"
+    body += "/service/status/devops-worker/devops-rtml\n"
     body
   }
 
@@ -246,7 +246,7 @@ class Controller extends ScalatraServlet with FlashMapSupport with ScalateSuppor
 
     RecMetricsCollector.addMetric(
       s"service_status_$service",
-      new Metric(s"is_online_${vm}", s"1 if $vm is online, 0 otherwise",
+      new Metric(s"is_online_${vm}_$service", s"1 if $vm.$service is running, 0 otherwise",
         if(running) 1 else 0, "devops_exporter", vm))
 
     logger.info(s" ******************* Metrics update, now ${RecMetricsCollector.metrics.size}")
