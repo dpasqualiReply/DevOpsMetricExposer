@@ -116,11 +116,18 @@ case class AnsibleConnector(ansibleHome : String,
   }
 
 
+//  def getAnsibleRunResult(lastLine : String) : AnsibleResult = {
+//    val pattern =
+//      """([A-Za-z-0-9]+)( +): ok=(\d+)( +)changed=(\d+)( +)unreachable=(\d+)( +)failed=(\d+)""".r
+//    val pattern(name, s1, ok, s2, changed, s3, unreachable, s4, failed) = lastLine
+//    AnsibleResult(name, ok.toInt, changed.toInt, unreachable.toInt, failed.toInt)
+//  }
+
   def getAnsibleRunResult(lastLine : String) : AnsibleResult = {
-    val pattern =
-      """([A-Za-z-0-9]+)( +): ok=(\d+)( +)changed=(\d+)( +)unreachable=(\d+)( +)failed=(\d+)""".r
-    val pattern(name, s1, ok, s2, changed, s3, unreachable, s4, failed) = lastLine
-    AnsibleResult(name, ok.toInt, changed.toInt, unreachable.toInt, failed.toInt)
+
+    val arr = lastLine.split(" ").filter(el => el != "" && el != ":")
+    val values = arr.map(e => if(e.contains("=")) e.split("=")(1) else e)
+    AnsibleResult(values(0), values(1).toInt, values(2).toInt, values(3).toInt, values(4).toInt)
   }
 
 
