@@ -204,7 +204,7 @@ class Controller extends ScalatraServlet with FlashMapSupport with ScalateSuppor
   // ********************** COLLECTORS *****************************
 
   def collectMachineStatus(vm : String) : Boolean = {
-    val online = ansible.pingMachine(vm)
+    val online = ansible.pingMachinePy(vm)
 
     RecMetricsCollector.addMetric(
       s"is_online_${vm}",
@@ -242,7 +242,7 @@ class Controller extends ScalatraServlet with FlashMapSupport with ScalateSuppor
   }
 
   def collectServiceStatus(vm: String, service: String) : Boolean = {
-    val running = ansible.checkServiceRunning(vm, service)
+    val running = ansible.checkServiceRunningPy(vm, service)
 
     RecMetricsCollector.addMetric(
       s"service_status_$service",

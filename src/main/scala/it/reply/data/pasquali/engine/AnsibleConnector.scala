@@ -46,8 +46,7 @@ case class AnsibleConnector(ansibleHome : String,
 
     logger.info(s" .......................... ANSIBLE COMMAND $query")
 
-    var res = s"""python ansbile/run.py $query"""
-
+    var res = s"""python ./ansbile/run.py check $machineAddress"""
     res.contains(machineAddress) && res.contains("SUCCESS") && res.contains(""""ping": "pong"""")
   }
 
@@ -96,7 +95,10 @@ case class AnsibleConnector(ansibleHome : String,
 
     logger.info(s" .......................... ANSIBLE COMMAND $query")
 
-    var res = s"""python ansbile/run.py $query"""
+    var res = s"""python ./ansbile/run.py service $machineAddress $service"""
+    val split = res.split("\n")
+
+    res = split(split.length-1)
 
     val ar = getAnsibleRunResult(res)
 
