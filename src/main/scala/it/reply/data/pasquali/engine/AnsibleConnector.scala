@@ -46,7 +46,7 @@ case class AnsibleConnector(ansibleHome : String,
 
     logger.info(s" .......................... ANSIBLE COMMAND $query")
 
-    var res = s"""python ./ansbile/run.py check $machineAddress"""
+    var res = s"""python ./ansbile/run.py check $machineAddress""" !!
 
     logger.info(res)
 
@@ -98,7 +98,7 @@ case class AnsibleConnector(ansibleHome : String,
 
     logger.info(s" .......................... ANSIBLE COMMAND $query")
 
-    var res = s"""python ./ansbile/run.py service $machineAddress $service"""
+    var res = s"""python ./ansbile/run.py service $machineAddress $service""" !!
 
     logger.info(res)
 
