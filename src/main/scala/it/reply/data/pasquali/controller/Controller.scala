@@ -177,7 +177,7 @@ class Controller extends ScalatraServlet with FlashMapSupport with ScalateSuppor
       collectServiceStatus("devops-worker", "devops-kafka-jdbc-connector")
       collectServiceStatus("devops-worker", "devops-rtetl-ratings")
       collectServiceStatus("devops-worker", "devops-rtetl-tags")
-      collectServiceStatus("devops-worker", "devops-bml")
+      collectServiceStatus("devops-worker", "devops-rtml")
     }
     else println("[ ERROR ] DevOps worker is offline!!")
 
